@@ -1,61 +1,11 @@
-package main
+package evaluator
 
 import (
-	"encoding/json"
 	"errors"
-	"fmt"
-	"net/http"
 	"strconv"
 	"strings"
 	"unicode"
 )
-
-func main() {
-	http.HandleFunc("/api/v1/calculate", calculateHandler)
-
-	port := "8080" // Порт сервера
-	fmt.Printf("Server is running on port %s...\n", port)
-	err := http.ListenAndServe(":"+port, nil)
-	if err != nil {
-		fmt.Println("Error starting server:", err)
-	}
-}
-
-func calculateHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, `{"error": "Invalid request method"}`, http.StatusMethodNotAllowed)
-		return
-	}
-
-	var request struct {
-		Expression string `json:"expression"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, `{"error": "Invalid JSON"}`, http.StatusBadRequest)
-		return
-	}
-
-	result, err := Calc(request.Expression)
-	if err != nil {
-		if errors.Is(err, ErrInvalidExpression) {
-			http.Error(w, `{"error": "Expression is not valid"}`, http.StatusUnprocessableEntity)
-		} else {
-			http.Error(w, `{"error": "Internal server error"}`, http.StatusInternalServerError)
-		}
-		return
-	}
-
-	response := struct {
-		Result float64 `json:"result"`
-	}{
-		Result: result,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
-}
 
 var ErrInvalidExpression = errors.New("invalid expression")
 
