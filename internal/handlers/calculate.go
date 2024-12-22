@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/scriptoxin/yandex-liceum-go-calc/internal/evaluator"
@@ -34,9 +35,9 @@ func CalculateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := struct {
-		Result float64 `json:"result"`
+		Result string `json:"result"`
 	}{
-		Result: result,
+		Result: fmt.Sprintf("%.0f", result),
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -44,9 +45,9 @@ func CalculateHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-// respondWithError - удобный метод для отправки ошибок.
 func respondWithError(w http.ResponseWriter, appErr *errors.AppError) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(appErr.Code)
-	json.NewEncoder(w).Encode(appErr)
+	errorResponse := map[string]string{"error": appErr.Message}
+	json.NewEncoder(w).Encode(errorResponse)
 }

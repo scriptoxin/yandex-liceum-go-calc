@@ -3,12 +3,16 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/scriptoxin/yandex-liceum-go-calc/internal/handlers"
 )
 
 func main() {
-	port := "8080" // Конфигурируемый порт
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 
 	http.HandleFunc("/api/v1/calculate", handlers.CalculateHandler)
 
