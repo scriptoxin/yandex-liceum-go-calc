@@ -18,7 +18,7 @@ func TestCalculateHandler_Success(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(handlers.CalculateHandler)
+	handler := http.HandlerFunc(handlers.HandleCalculate)
 
 	handler.ServeHTTP(rr, req)
 
@@ -41,7 +41,7 @@ func TestCalculateHandler_InvalidExpression(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(handlers.CalculateHandler)
+	handler := http.HandlerFunc(handlers.HandleCalculate)
 
 	handler.ServeHTTP(rr, req)
 
@@ -63,7 +63,7 @@ func TestCalculateHandler_InternalError(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(handlers.CalculateHandler)
+	handler := http.HandlerFunc(handlers.HandleCalculate)
 
 	handler.ServeHTTP(rr, req)
 

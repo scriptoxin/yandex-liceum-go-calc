@@ -7,12 +7,15 @@ import (
 	"unicode"
 )
 
+// ErrInvalidExpression возвращается при некорректном выражении.
 var ErrInvalidExpression = errors.New("invalid expression")
 
+// Calc принимает арифметическое выражение, удаляет пробелы и вычисляет результат.
 func Calc(expression string) (float64, error) {
 	expression = strings.ReplaceAll(expression, " ", "")
-	result, _, err := eval(expression, 0)
-	if err != nil {
+	result, pos, err := eval(expression, 0)
+	// Если вся строка не обработана, считаем, что выражение некорректно.
+	if pos < len(expression) || err != nil {
 		return 0, ErrInvalidExpression
 	}
 	return result, nil
@@ -24,7 +27,6 @@ func eval(expression string, pos int) (float64, int, error) {
 
 	for pos < len(expression) {
 		char := expression[pos]
-
 		if unicode.IsDigit(rune(char)) || char == '.' {
 			value, newPos, err := parseNumber(expression, pos)
 			if err != nil {
@@ -40,6 +42,7 @@ func eval(expression string, pos int) (float64, int, error) {
 			numStack = append(numStack, value)
 			pos = newPos
 		} else if char == ')' {
+			pos++ // пропускаем ')'
 			break
 		} else if isOperator(char) {
 			for len(opStack) > 0 && precedence(opStack[len(opStack)-1]) >= precedence(char) {
@@ -52,7 +55,7 @@ func eval(expression string, pos int) (float64, int, error) {
 			opStack = append(opStack, char)
 			pos++
 		} else {
-			return 0, pos, ErrInvalidExpression
+			return 0, pos, errors.New("invalid character in expression")
 		}
 	}
 
@@ -65,10 +68,10 @@ func eval(expression string, pos int) (float64, int, error) {
 	}
 
 	if len(numStack) != 1 {
-		return 0, pos, ErrInvalidExpression
+		return 0, pos, errors.New("invalid expression")
 	}
 
-	return numStack[0], pos + 1, nil
+	return numStack[0], pos, nil
 }
 
 func parseNumber(expression string, pos int) (float64, int, error) {
@@ -78,14 +81,14 @@ func parseNumber(expression string, pos int) (float64, int, error) {
 	}
 	value, err := strconv.ParseFloat(expression[startPos:pos], 64)
 	if err != nil {
-		return 0, pos, ErrInvalidExpression
+		return 0, pos, err
 	}
 	return value, pos, nil
 }
 
 func applyOperation(numStack *[]float64, opStack *[]byte) (float64, error) {
 	if len(*numStack) < 2 {
-		return 0, ErrInvalidExpression
+		return 0, errors.New("not enough operands")
 	}
 
 	b := (*numStack)[len(*numStack)-1]
@@ -108,7 +111,7 @@ func applyOperation(numStack *[]float64, opStack *[]byte) (float64, error) {
 		}
 		return a / b, nil
 	default:
-		return 0, ErrInvalidExpression
+		return 0, errors.New("unknown operator")
 	}
 }
 
@@ -122,6 +125,7 @@ func precedence(op byte) int {
 		return 1
 	case '*', '/':
 		return 2
+	default:
+		return 0
 	}
-	return 0
 }
