@@ -26,6 +26,14 @@ func main() {
 	r.HandleFunc("/internal/task", handlers.HandleGetTask).Methods("GET")
 	r.HandleFunc("/internal/task", handlers.HandlePostTask).Methods("POST")
 
+	// Обработка статики
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
+	// root handler
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./static/index.html")
+	})
+
 	log.Printf("Orchestrator is running on port %s...", port)
 	if err := http.ListenAndServe(":"+port, r); err != nil {
 		log.Fatalf("Error starting server: %v", err)

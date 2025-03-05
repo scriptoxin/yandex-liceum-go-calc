@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Distributed Calculator</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Калькулятор выражений</h1>
+
+      <!-- Форма ввода -->
+      <div class="card">
+        <h2>Новое выражение</h2>
+        <input type="text" id="expression" placeholder="2+2*2" />
+        <button onclick="submitExpression()">Отправить</button>
+      </div>
+
+      <!-- Список выражений -->
+      <div class="card">
+        <h2>История вычислений</h2>
+        <div id="expressions-list" class="list"></div>
+      </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+  </body>
+</html>
