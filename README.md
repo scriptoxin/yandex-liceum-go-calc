@@ -30,7 +30,7 @@
 ├── pkg/
 │   ├── errors/                # Кастомные ошибки
 │   │   └── errors.go
-│   └── auth/                  # Работа с JWT
+│   └── jwt/                  # Работа с JWT
 │   │    └── jwt.go
 │   └── db/               # Работа с SQLite
 │       └── db.go
