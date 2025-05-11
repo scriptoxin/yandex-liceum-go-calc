@@ -1,0 +1,21 @@
+syntax = "proto3";
+option go_package = "github.com/scriptoxin/yandex-liceum-go-calc/calculator";
+
+service Calculator {
+  rpc GetTask(Empty) returns (Task);
+  rpc SubmitResult(Result) returns (Empty);
+}
+
+message Empty {}
+
+message Task {
+  string id = 1;
+  string expression = 2;
+  int32 start = 3;
+  int32 end = 4;
+}
+
+message Result {
+  string id = 1;
+  double value = 2;
+}
